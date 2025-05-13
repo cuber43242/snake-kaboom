@@ -2352,15 +2352,45 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   // code/main.js
   var k = kaboom_default({
     background: [0, 0, 30],
-    global: true
+    global: true,
+    width: 800,
+    height: 600
   });
   loadSprite("fence-top", "sprites/laser-h.png");
   loadSprite("fence-bottom", "sprites/laser-h.png");
   loadSprite("fence-left", "sprites/laser-v.png");
   loadSprite("fence-right", "sprites/laser-v.png");
   var highScore = 0;
+  scene("instructions", () => {
+    add([
+      text("SNAKE GAME", { size: 48 }),
+      pos(width() / 2, height() / 4),
+      origin("center"),
+      color(255, 255, 0)
+    ]);
+    add([
+      text("How to Play:", { size: 32 }),
+      pos(width() / 2, height() / 2 - 50),
+      origin("center"),
+      color(255, 255, 255)
+    ]);
+    add([
+      text("- Use arrow keys to control the snake\n- Collect red food to grow\n- Avoid walls and yourself\n- Score increases with each food eaten", { size: 24 }),
+      pos(width() / 2, height() / 2 + 50),
+      origin("center")
+    ]);
+    add([
+      text("Press SPACE to Start", { size: 32 }),
+      pos(width() / 2, height() - 100),
+      origin("center"),
+      color(0, 255, 0)
+    ]);
+    onKeyPress("space", () => {
+      go("game");
+    });
+  });
   scene("game", () => {
-    const BLOCK_SIZE = 20;
+    const BLOCK_SIZE = 25;
     let SNAKE_SPEED = 0.2;
     let score = 0;
     let snake = [];
@@ -2368,20 +2398,27 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     let gameOver = false;
     let food = null;
     const level = addLevel([
-      "wwwwwwwwwwwwww",
-      "w            w",
-      "w            w",
-      "w            w",
-      "w            w",
-      "w            w",
-      "w            w",
-      "w            w",
-      "w            w",
-      "w            w",
-      "w            w",
-      "w            w",
-      "w            w",
-      "wwwwwwwwwwwwww"
+      "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "w                              w",
+      "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
     ], {
       width: BLOCK_SIZE,
       height: BLOCK_SIZE,
@@ -2413,8 +2450,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       if (food) {
         destroy(food);
       }
-      const randomX = Math.floor(Math.random() * 12) + 1;
-      const randomY = Math.floor(Math.random() * 12) + 1;
+      const randomX = Math.floor(Math.random() * 28) + 1;
+      const randomY = Math.floor(Math.random() * 18) + 1;
       food = add([
         rect(BLOCK_SIZE - 4, BLOCK_SIZE - 4),
         pos(BLOCK_SIZE * randomX, BLOCK_SIZE * randomY),
@@ -2424,13 +2461,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       ]);
     }
     __name(spawnFood, "spawnFood");
-    add([
-      text("Use arrow keys to move", { size: 12 }),
-      pos(24, height() - 24),
-      color(255, 255, 255)
-    ]);
     const scoreLabel = add([
-      text("Score: 0  High Score: 0", { size: 20 }),
+      text("Score: 0  High Score: " + highScore, { size: 24 }),
       pos(24, 24),
       color(255, 255, 255)
     ]);
@@ -2491,9 +2523,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         if (score % 50 === 0) {
           SNAKE_SPEED = Math.max(0.05, SNAKE_SPEED - 0.02);
         }
-        if (score >= 100) {
-          go("win");
-        }
       }
       if (newHead.isColliding("wall") || snake.slice(1).some((segment) => newHead.isColliding(segment))) {
         gameOver = true;
@@ -2512,42 +2541,34 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   scene("lose", (score) => {
     const isNewHighScore = score > highScore;
     add([
-      text(isNewHighScore ? "New High Score!" : "Game Over!", { size: 32 }),
-      pos(width() / 2, height() / 2 - 64),
+      text(isNewHighScore ? "New High Score!" : "Game Over!", { size: 48 }),
+      pos(width() / 2, height() / 2 - 100),
       origin("center"),
       color(isNewHighScore ? rgb(255, 215, 0) : rgb(255, 0, 0))
     ]);
     add([
       text(`Score: ${score}
-High Score: ${highScore}`, { size: 24 }),
+High Score: ${highScore}`, { size: 32 }),
       pos(width() / 2, height() / 2),
       origin("center")
     ]);
     add([
-      text("Press SPACE to retry", { size: 16 }),
-      pos(width() / 2, height() / 2 + 64),
+      text("Press SPACE to Play Again", { size: 24 }),
+      pos(width() / 2, height() / 2 + 80),
+      origin("center")
+    ]);
+    add([
+      text("Press ESC for Instructions", { size: 24 }),
+      pos(width() / 2, height() / 2 + 120),
       origin("center")
     ]);
     onKeyPress("space", () => {
       go("game");
     });
-  });
-  scene("win", () => {
-    add([
-      text("You Won!", { size: 32 }),
-      pos(width() / 2, height() / 2 - 64),
-      origin("center"),
-      color(0, 255, 0)
-    ]);
-    add([
-      text("Press SPACE to play again", { size: 16 }),
-      pos(width() / 2, height() / 2 + 64),
-      origin("center")
-    ]);
-    onKeyPress("space", () => {
-      go("game");
+    onKeyPress("escape", () => {
+      go("instructions");
     });
   });
-  go("game");
+  go("instructions");
 })();
 //# sourceMappingURL=game.js.map
