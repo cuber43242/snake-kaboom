@@ -1,4 +1,3 @@
-
 import kaboom from "kaboom";
 
 const k = kaboom({
@@ -96,20 +95,20 @@ scene("game", () => {
     color(255, 255, 255),
   ]);
 
-  // Handle controls
-  k.onKeyPress("up", () => {
+  // Handle key controls
+  onKeyDown("up", () => {
     if (direction !== "down") direction = "up";
   });
 
-  k.onKeyPress("down", () => {
+  onKeyDown("down", () => {
     if (direction !== "up") direction = "down";
   });
 
-  k.onKeyPress("left", () => {
+  onKeyDown("left", () => {
     if (direction !== "right") direction = "left";
   });
 
-  k.onKeyPress("right", () => {
+  onKeyDown("right", () => {
     if (direction !== "left") direction = "right";
   });
 
@@ -150,7 +149,7 @@ scene("game", () => {
       score += 10;
       scoreLabel.text = `Score: ${score}`;
       spawnFood();
-      
+
       // Increase difficulty every 50 points
       if (score % 50 === 0) {
         SNAKE_SPEED = Math.max(0.05, SNAKE_SPEED - 0.02);
