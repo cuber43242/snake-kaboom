@@ -2461,7 +2461,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       destroy(food);
     }
     food = add([
-      circle(8),
+      rect(16, 16),
       color(255, 0, 0),
       pos(new_pos),
       area(),
