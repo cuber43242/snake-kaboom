@@ -141,7 +141,7 @@ scene("game", () => {
 
     snake.unshift(newHead);
 
-    if (!isColliding(newHead, food)) {
+    if (!newHead.isColliding(food)) {
       const tail = snake.pop();
       destroy(tail);
     } else {
@@ -160,8 +160,8 @@ scene("game", () => {
       }
     }
 
-    if (isColliding(newHead, get("wall")[0]) || 
-        snake.slice(1).some(segment => isColliding(newHead, segment))) {
+    if (newHead.isColliding("wall") || 
+        snake.slice(1).some(segment => newHead.isColliding(segment))) {
       gameOver = true;
       shake(12);
       wait(1, () => {
