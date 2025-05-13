@@ -2351,19 +2351,18 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // code/main.js
   var k = kaboom_default({
-    background: [0, 0, 30],
+    background: [0, 0, 0],
     global: true,
     width: 800,
     height: 600
   });
-  loadSprite("fence-top", "sprites/laser-h.png");
-  loadSprite("fence-bottom", "sprites/laser-h.png");
-  loadSprite("fence-left", "sprites/laser-v.png");
-  loadSprite("fence-right", "sprites/laser-v.png");
+  loadSprite("starship", "sprites/starship.png");
+  loadSprite("lightsaber", "sprites/lightsaber.png");
+  loadSprite("deathStar", "sprites/death_star.png");
   var highScore = 0;
   scene("instructions", () => {
     add([
-      text("SNAKE GAME", { size: 48 }),
+      text("STAR WARS: SNAKE WARS", { size: 48 }),
       pos(width() / 2, height() / 4),
       origin("center"),
       color(255, 255, 0)
@@ -2375,9 +2374,15 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       color(255, 255, 255)
     ]);
     add([
-      text("- Use arrow keys to control the snake\n- Collect red food to grow\n- Avoid walls and yourself\n- Score increases with each food eaten", { size: 24 }),
+      text("- You are the jedi as an aqua snake\n-Immobilize sith weaponary\n- Use arrow keys to control the jedi snake\n- Collect sith lightsabers to grow\n- Avoid walls and yourself (you will die with yourself)\n- Score increases with each lightsaber\n- Try to achieve a high score to win", { size: 24 }),
       pos(width() / 2, height() / 2 + 50),
       origin("center")
+    ]);
+    add([
+      sprite("starship"),
+      pos(width() / 2, height() / 2 + 150),
+      origin("center"),
+      scale(0.5)
     ]);
     add([
       text("Press SPACE to Start", { size: 32 }),
@@ -2385,50 +2390,63 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       origin("center"),
       color(0, 255, 0)
     ]);
-    onKeyPress("space", () => {
+    keyPress("space", () => {
       go("game");
     });
   });
   scene("game", () => {
     const BLOCK_SIZE = 25;
-    let SNAKE_SPEED = 0.2;
+    let SNAKE_SPEED = 5;
     let score = 0;
     let snake = [];
     let direction = "right";
     let gameOver = false;
     let food = null;
     const level = addLevel([
-      "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "w                              w",
-      "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
+      "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "r                              r",
+      "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
     ], {
       width: BLOCK_SIZE,
       height: BLOCK_SIZE,
-      "w": () => [
+      "r": () => [
         rect(BLOCK_SIZE, BLOCK_SIZE),
-        color(0, 255, 255),
+        color(255, 0, 0),
         area(),
         "wall"
       ]
     });
+    const scoreLabel = add([
+      text("Score: 0", { size: 24 }),
+      pos(24, 24),
+      color(255, 255, 255)
+    ]);
+    const highScoreLabel = add([
+      text(`High Score: ${highScore}`, { size: 24 }),
+      pos(24, 50),
+      color(255, 255, 0)
+    ]);
     function initSnake() {
       snake = [];
       direction = "right";
@@ -2439,7 +2457,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         snake.push(add([
           rect(BLOCK_SIZE - 2, BLOCK_SIZE - 2),
           pos(BLOCK_SIZE * (3 - i), BLOCK_SIZE * 3),
-          color(255, 255, 0),
+          color(0, 255, 255),
           area(),
           "snake"
         ]));
@@ -2453,19 +2471,14 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       const randomX = Math.floor(Math.random() * 28) + 1;
       const randomY = Math.floor(Math.random() * 18) + 1;
       food = add([
-        rect(BLOCK_SIZE - 4, BLOCK_SIZE - 4),
+        sprite("lightsaber"),
         pos(BLOCK_SIZE * randomX, BLOCK_SIZE * randomY),
-        color(255, 0, 0),
         area(),
+        scale(0.4),
         "food"
       ]);
     }
     __name(spawnFood, "spawnFood");
-    const scoreLabel = add([
-      text("Score: 0  High Score: " + highScore, { size: 24 }),
-      pos(24, 24),
-      color(255, 255, 255)
-    ]);
     action(() => {
       if (keyIsDown("up") && direction !== "down") {
         direction = "up";
@@ -2508,65 +2521,58 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       const newHead = add([
         rect(BLOCK_SIZE - 2, BLOCK_SIZE - 2),
         pos(newX, newY),
-        color(255, 255, 0),
+        color(0, 255, 255),
         area(),
         "snake"
       ]);
       snake.unshift(newHead);
-      if (!newHead.isColliding(food)) {
+      if (newHead.isColliding(food)) {
+        score += 10;
+        scoreLabel.text = `Score: ${score}`;
+        if (score > highScore) {
+          highScore = score;
+          highScoreLabel.text = `High Score: ${highScore}`;
+        }
+        spawnFood();
+      } else {
         const tail = snake.pop();
         destroy(tail);
-      } else {
-        score += 10;
-        scoreLabel.text = `Score: ${score}  High Score: ${highScore}`;
-        spawnFood();
-        if (score % 50 === 0) {
-          SNAKE_SPEED = Math.max(0.05, SNAKE_SPEED - 0.02);
-        }
       }
       if (newHead.isColliding("wall") || snake.slice(1).some((segment) => newHead.isColliding(segment))) {
         gameOver = true;
         shake(12);
         wait(1, () => {
-          if (score > highScore) {
-            highScore = score;
-          }
-          go("lose", score);
+          go("lose", score, highScore);
         });
       }
     });
     initSnake();
     spawnFood();
   });
-  scene("lose", (score) => {
-    const isNewHighScore = score > highScore;
+  scene("lose", (finalScore, finalHighScore) => {
     add([
-      text(isNewHighScore ? "New High Score!" : "Game Over!", { size: 48 }),
-      pos(width() / 2, height() / 2 - 100),
-      origin("center"),
-      color(isNewHighScore ? rgb(255, 215, 0) : rgb(255, 0, 0))
+      text("Game Over", { size: 48 }),
+      pos(width() / 2, height() / 2 - 50),
+      origin("center")
     ]);
     add([
-      text(`Score: ${score}
-High Score: ${highScore}`, { size: 32 }),
+      text(`Score: ${finalScore}`, { size: 24 }),
       pos(width() / 2, height() / 2),
       origin("center")
     ]);
     add([
-      text("Press SPACE to Play Again", { size: 24 }),
-      pos(width() / 2, height() / 2 + 80),
-      origin("center")
+      text(`High Score: ${finalHighScore}`, { size: 24 }),
+      pos(width() / 2, height() / 2 + 30),
+      origin("center"),
+      color(255, 255, 0)
     ]);
     add([
-      text("Press ESC for Instructions", { size: 24 }),
-      pos(width() / 2, height() / 2 + 120),
+      text("Press SPACE to Restart", { size: 24 }),
+      pos(width() / 2, height() / 2 + 70),
       origin("center")
     ]);
-    onKeyPress("space", () => {
+    keyPress("space", () => {
       go("game");
-    });
-    onKeyPress("escape", () => {
-      go("instructions");
     });
   });
   go("instructions");
