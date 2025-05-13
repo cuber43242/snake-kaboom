@@ -2358,143 +2358,192 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   loadSprite("fence-bottom", "sprites/laser-h.png");
   loadSprite("fence-left", "sprites/laser-v.png");
   loadSprite("fence-right", "sprites/laser-v.png");
-  var BLOCK_SIZE = 20;
-  var SNAKE_SPEED = 0.2;
-  var score = 0;
-  var snake = [];
-  var direction = "right";
-  var gameOver = false;
-  var food = null;
-  var level = addLevel([
-    "wwwwwwwwwwwwww",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "wwwwwwwwwwwwww"
-  ], {
-    width: BLOCK_SIZE,
-    height: BLOCK_SIZE,
-    "w": () => [
-      rect(BLOCK_SIZE, BLOCK_SIZE),
-      color(0, 255, 255),
-      area(),
-      "wall"
-    ]
-  });
-  function initSnake() {
-    snake = [];
-    direction = "right";
-    gameOver = false;
-    score = 0;
-    for (let i = 0; i < 3; i++) {
-      snake.push(add([
+  scene("game", () => {
+    const BLOCK_SIZE = 20;
+    let SNAKE_SPEED = 0.2;
+    let score = 0;
+    let snake = [];
+    let direction = "right";
+    let gameOver = false;
+    let food = null;
+    const level = addLevel([
+      "wwwwwwwwwwwwww",
+      "w            w",
+      "w            w",
+      "w            w",
+      "w            w",
+      "w            w",
+      "w            w",
+      "w            w",
+      "w            w",
+      "w            w",
+      "w            w",
+      "w            w",
+      "w            w",
+      "wwwwwwwwwwwwww"
+    ], {
+      width: BLOCK_SIZE,
+      height: BLOCK_SIZE,
+      "w": () => [
+        rect(BLOCK_SIZE, BLOCK_SIZE),
+        color(0, 255, 255),
+        area(),
+        "wall"
+      ]
+    });
+    function initSnake() {
+      snake = [];
+      direction = "right";
+      gameOver = false;
+      score = 0;
+      SNAKE_SPEED = 0.2;
+      for (let i = 0; i < 3; i++) {
+        snake.push(add([
+          rect(BLOCK_SIZE - 2, BLOCK_SIZE - 2),
+          pos(BLOCK_SIZE * (3 - i), BLOCK_SIZE * 3),
+          color(255, 255, 0),
+          area(),
+          "snake"
+        ]));
+      }
+    }
+    __name(initSnake, "initSnake");
+    function spawnFood() {
+      if (food) {
+        destroy(food);
+      }
+      const randomX = Math.floor(Math.random() * 12) + 1;
+      const randomY = Math.floor(Math.random() * 12) + 1;
+      food = add([
+        rect(BLOCK_SIZE - 4, BLOCK_SIZE - 4),
+        pos(BLOCK_SIZE * randomX, BLOCK_SIZE * randomY),
+        color(255, 0, 0),
+        area(),
+        "food"
+      ]);
+    }
+    __name(spawnFood, "spawnFood");
+    add([
+      text("Use arrow keys to move", { size: 12 }),
+      pos(24, height() - 24),
+      color(255, 255, 255)
+    ]);
+    const scoreLabel = add([
+      text("Score: 0", { size: 20 }),
+      pos(24, 24),
+      color(255, 255, 255)
+    ]);
+    k.onKeyPress("up", () => {
+      if (direction !== "down")
+        direction = "up";
+    });
+    k.onKeyPress("down", () => {
+      if (direction !== "up")
+        direction = "down";
+    });
+    k.onKeyPress("left", () => {
+      if (direction !== "right")
+        direction = "left";
+    });
+    k.onKeyPress("right", () => {
+      if (direction !== "left")
+        direction = "right";
+    });
+    let moveTimer = 0;
+    onUpdate(() => {
+      if (gameOver)
+        return;
+      moveTimer += dt();
+      if (moveTimer < SNAKE_SPEED)
+        return;
+      moveTimer = 0;
+      const head = snake[0];
+      let newX = head.pos.x;
+      let newY = head.pos.y;
+      switch (direction) {
+        case "up":
+          newY -= BLOCK_SIZE;
+          break;
+        case "down":
+          newY += BLOCK_SIZE;
+          break;
+        case "left":
+          newX -= BLOCK_SIZE;
+          break;
+        case "right":
+          newX += BLOCK_SIZE;
+          break;
+      }
+      const newHead = add([
         rect(BLOCK_SIZE - 2, BLOCK_SIZE - 2),
-        pos(BLOCK_SIZE * (3 - i), BLOCK_SIZE * 3),
+        pos(newX, newY),
         color(255, 255, 0),
         area(),
         "snake"
-      ]));
-    }
-  }
-  __name(initSnake, "initSnake");
-  function spawnFood() {
-    if (food) {
-      destroy(food);
-    }
-    const randomX = Math.floor(Math.random() * 12) + 1;
-    const randomY = Math.floor(Math.random() * 12) + 1;
-    food = add([
-      rect(BLOCK_SIZE - 4, BLOCK_SIZE - 4),
-      pos(BLOCK_SIZE * randomX, BLOCK_SIZE * randomY),
-      color(255, 0, 0),
-      area(),
-      "food"
-    ]);
-  }
-  __name(spawnFood, "spawnFood");
-  onKeyPress("up", () => {
-    if (direction !== "down")
-      direction = "up";
-  });
-  onKeyPress("down", () => {
-    if (direction !== "up")
-      direction = "down";
-  });
-  onKeyPress("left", () => {
-    if (direction !== "right")
-      direction = "left";
-  });
-  onKeyPress("right", () => {
-    if (direction !== "left")
-      direction = "right";
-  });
-  var scoreLabel = add([
-    text("Score: 0", { size: 20, font: "sinko", color: rgb(255, 232, 31) }),
-    pos(24, 24),
-    fixed()
-  ]);
-  initSnake();
-  spawnFood();
-  var moveTimer = 0;
-  onUpdate(() => {
-    if (gameOver)
-      return;
-    moveTimer += dt();
-    if (moveTimer < SNAKE_SPEED)
-      return;
-    moveTimer = 0;
-    const head = snake[0];
-    let newX = head.pos.x;
-    let newY = head.pos.y;
-    switch (direction) {
-      case "up":
-        newY -= BLOCK_SIZE;
-        break;
-      case "down":
-        newY += BLOCK_SIZE;
-        break;
-      case "left":
-        newX -= BLOCK_SIZE;
-        break;
-      case "right":
-        newX += BLOCK_SIZE;
-        break;
-    }
-    const newHead = add([
-      rect(BLOCK_SIZE - 2, BLOCK_SIZE - 2),
-      pos(newX, newY),
-      color(255, 255, 0),
-      area(),
-      "snake"
-    ]);
-    snake.unshift(newHead);
-    if (!isColliding(newHead, food)) {
-      const tail = snake.pop();
-      destroy(tail);
-    } else {
-      score += 10;
-      scoreLabel.text = `Score: ${score}`;
-      spawnFood();
-    }
-    if (isColliding(newHead, get("wall")[0]) || snake.slice(1).some((segment) => isColliding(newHead, segment))) {
-      gameOver = true;
-      shake(12);
-      wait(1, () => {
-        destroyAll("snake");
-        destroyAll("food");
-        initSnake();
+      ]);
+      snake.unshift(newHead);
+      if (!isColliding(newHead, food)) {
+        const tail = snake.pop();
+        destroy(tail);
+      } else {
+        score += 10;
+        scoreLabel.text = `Score: ${score}`;
         spawnFood();
-      });
-    }
+        if (score % 50 === 0) {
+          SNAKE_SPEED = Math.max(0.05, SNAKE_SPEED - 0.02);
+        }
+        if (score >= 100) {
+          go("win");
+        }
+      }
+      if (isColliding(newHead, get("wall")[0]) || snake.slice(1).some((segment) => isColliding(newHead, segment))) {
+        gameOver = true;
+        shake(12);
+        wait(1, () => {
+          go("lose", score);
+        });
+      }
+    });
+    initSnake();
+    spawnFood();
   });
+  scene("lose", (score) => {
+    add([
+      text("Game Over!", { size: 32 }),
+      pos(width() / 2, height() / 2 - 64),
+      origin("center"),
+      color(255, 0, 0)
+    ]);
+    add([
+      text(`Score: ${score}`, { size: 24 }),
+      pos(width() / 2, height() / 2),
+      origin("center")
+    ]);
+    add([
+      text("Press SPACE to retry", { size: 16 }),
+      pos(width() / 2, height() / 2 + 64),
+      origin("center")
+    ]);
+    k.onKeyPress("space", () => {
+      go("game");
+    });
+  });
+  scene("win", () => {
+    add([
+      text("You Won!", { size: 32 }),
+      pos(width() / 2, height() / 2 - 64),
+      origin("center"),
+      color(0, 255, 0)
+    ]);
+    add([
+      text("Press SPACE to play again", { size: 16 }),
+      pos(width() / 2, height() / 2 + 64),
+      origin("center")
+    ]);
+    k.onKeyPress("space", () => {
+      go("game");
+    });
+  });
+  go("game");
 })();
 //# sourceMappingURL=game.js.map
