@@ -1,6 +1,9 @@
 import kaboom from "kaboom";
 
-kaboom({background:[0,0,30]});
+const k = kaboom({
+  background: [0, 0, 30],
+  global: true,
+});
 
 loadSprite("fence-top", "sprites/laser-h.png");
 loadSprite("fence-bottom", "sprites/laser-h.png");
