@@ -1,3 +1,4 @@
+
 import kaboom from "kaboom";
 
 kaboom({background:[0,0,30]});
@@ -6,10 +7,6 @@ loadSprite("fence-top", "sprites/laser-h.png");
 loadSprite("fence-bottom", "sprites/laser-h.png");
 loadSprite("fence-left", "sprites/laser-v.png");
 loadSprite("fence-right", "sprites/laser-v.png");
-
-layers([
-    "game"
-], "game");
 
 const directions = {
   UP: "up",
@@ -22,208 +19,228 @@ let current_direction = directions.RIGHT;
 let run_action = false;
 let snake_length = 3;
 let snake_body = [];
+let score = 0;
 
 const block_size = 20;
 
 const map = addLevel([
-     "1tttttttttttt2",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "l            r ",
-     "3bbbbbbbbbbbb4",
+  "1tttttttttttt2",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "l            r ",
+  "3bbbbbbbbbbbb4",
 ], {
-     width: block_size,
-     height: block_size,
-     pos: vec2(0, 0),
-     "t": ()=> [
-          sprite("fence-top"),
-          area(),
-          "wall"
-     ],
-     "b": ()=> [
-          sprite("fence-bottom"),
-          area(),
-          "wall"
-     ],
-     "l": ()=> [
-          sprite("fence-left"),
-          area(),
-          "wall"
-     ],
-     "r": ()=> [
-          sprite("fence-right"),
-          area(),
-          "wall"
-     ],
-     "1": ()=> [
-          sprite("post-top-left"),
-          area(),
-          "wall"
-     ],
-     "2": ()=> [
-          sprite("post-top-right"),
-          area(),
-          "wall"
-     ],
-     "3": ()=> [
-          sprite("post-bottom-left"),
-          area(),
-          "wall"
-     ],
-     "4": ()=> [
-          sprite("post-bottom-right"),
-          area(),
-          "wall"
-     ],
+  width: block_size,
+  height: block_size,
+  pos: vec2(0, 0),
+  "t": () => [
+    sprite("fence-top"),
+    area(),
+    "wall"
+  ],
+  "b": () => [
+    sprite("fence-bottom"),
+    area(),
+    "wall"
+  ],
+  "l": () => [
+    sprite("fence-left"),
+    area(),
+    "wall"
+  ],
+  "r": () => [
+    sprite("fence-right"),
+    area(),
+    "wall"
+  ],
+  "1": () => [
+    sprite("fence-left"),
+    area(),
+    "wall"
+  ],
+  "2": () => [
+    sprite("fence-right"),
+    area(),
+    "wall"
+  ],
+  "3": () => [
+    sprite("fence-left"),
+    area(),
+    "wall"
+  ],
+  "4": () => [
+    sprite("fence-right"),
+    area(),
+    "wall"
+  ],
 });
 
-function respawn_snake(){
+function respawn_snake() {
   snake_body.forEach(segment => {
-      destroy(segment);
-    });
+    destroy(segment);
+  });
   snake_body = [];
   snake_length = 3;
+  score = 0;
 
   for (let i = 1; i <= snake_length; i++) {
-      snake_body.push(add([
-          sprite('snake-skin'),
-          pos(block_size  ,block_size * i),
-          area(),
-          "snake"
-      ]));
+    snake_body.push(add([
+      rect(block_size - 4, block_size - 4),
+      pos(block_size, block_size * i),
+      color(0, 255, 255),
+      area(),
+      "snake"
+    ]));
   }
   current_direction = directions.RIGHT;
 }
+
 add([
-		text("\nStar Wars Snake\nUse The Force!", {size:20, font:"sinko", color: rgb(255, 232, 31)},),
-    pos(24, 270),
-		fixed(),
-    ])
+  text("Star Wars Snake\nUse The Force!", { size: 20, font: "sinko", color: rgb(255, 232, 31) }),
+  pos(24, 270),
+  fixed(),
+]);
 
 let food = null;
 
-function respawn_food(){
-    let new_pos = rand(vec2(1,1), vec2(13,13));
-    new_pos.x = Math.floor(new_pos.x);
-    new_pos.y = Math.floor(new_pos.y);
-    new_pos = new_pos.scale(block_size);
+function respawn_food() {
+  let new_pos = rand(vec2(1, 1), vec2(13, 13));
+  new_pos.x = Math.floor(new_pos.x);
+  new_pos.y = Math.floor(new_pos.y);
+  new_pos = new_pos.scale(block_size);
 
-    if (food){
-        destroy(food);
-    }
-    food = add([
-                sprite('pizza'),
-                pos(new_pos),
-                area(),
-                "food"
-            ]);
+  if (food) {
+    destroy(food);
+  }
+  food = add([
+    circle(8),
+    color(255, 0, 0),
+    pos(new_pos),
+    area(),
+    "food"
+  ]);
 }
 
-function respawn_all(){
+function respawn_all() {
   run_action = false;
-    wait(0.5, function(){
-        respawn_snake();
-        respawn_food();
-        run_action = true;
-    });
+  wait(0.5, function() {
+    respawn_snake();
+    respawn_food();
+    run_action = true;
+  });
 }
 
 respawn_all();
 
 collides("snake", "food", (s, f) => {
-    snake_length ++;
-    respawn_food();
+  snake_length++;
+  score += 10;
+  respawn_food();
 });
 
 collides("snake", "wall", (s, w) => {
-    run_action = false;
-    shake(12);
-    respawn_all();
+  run_action = false;
+  shake(12);
+  respawn_all();
 });
 
 collides("snake", "snake", (s, t) => {
-    run_action = false;
-    shake(12);
-    respawn_all();
+  run_action = false;
+  shake(12);
+  respawn_all();
 });
 
 keyPress("up", () => {
-    if (current_direction != directions.DOWN){
-        current_direction = directions.UP;
-    }
+  if (current_direction != directions.DOWN) {
+    current_direction = directions.UP;
+  }
 });
 
 keyPress("down", () => {
-    if (current_direction != directions.UP){
-        current_direction = directions.DOWN;
-    }
+  if (current_direction != directions.UP) {
+    current_direction = directions.DOWN;
+  }
 });
 
 keyPress("left", () => {
-    if (current_direction != directions.RIGHT){
-        current_direction = directions.LEFT;
-    }
+  if (current_direction != directions.RIGHT) {
+    current_direction = directions.LEFT;
+  }
 });
 
 keyPress("right", () => {
-    if (current_direction != directions.LEFT){
-        current_direction = directions.RIGHT;
-    }
+  if (current_direction != directions.LEFT) {
+    current_direction = directions.RIGHT;
+  }
 });
 
+add([
+  text("Score:", { size: 20, font: "sinko", color: rgb(255, 232, 31) }),
+  pos(24, 24),
+  fixed(),
+  "score"
+]);
+
+const scoreText = add([
+  text("0", { size: 20, font: "sinko", color: rgb(255, 232, 31) }),
+  pos(100, 24),
+  fixed(),
+  "scoreValue"
+]);
 
 let move_delay = 0.2;
 let timer = 0;
-action(()=> {
-    if (!run_action) return;
-    timer += dt();
-    if (timer < move_delay) return;
-    timer = 0;
+action(() => {
+  if (!run_action) return;
+  timer += dt();
+  if (timer < move_delay) return;
+  timer = 0;
 
-    let move_x = 0;
-    let move_y = 0;
+  let move_x = 0;
+  let move_y = 0;
 
-    switch (current_direction) {
-        case directions.DOWN:
-            move_x = 0;
-            move_y = block_size;
-            break;
-        case directions.UP:
-            move_x = 0;
-            move_y = -1*block_size;
-            break;
-        case directions.LEFT:
-            move_x = -1*block_size;
-            move_y = 0;
-            break;
-        case directions.RIGHT:
-            move_x = block_size;
-            move_y = 0;
-            break;
-    }
+  switch (current_direction) {
+    case directions.DOWN:
+      move_x = 0;
+      move_y = block_size;
+      break;
+    case directions.UP:
+      move_x = 0;
+      move_y = -1 * block_size;
+      break;
+    case directions.LEFT:
+      move_x = -1 * block_size;
+      move_y = 0;
+      break;
+    case directions.RIGHT:
+      move_x = block_size;
+      move_y = 0;
+      break;
+  }
 
-    // Get the last element (the snake head)
-    let snake_head = snake_body[snake_body.length - 1];
+  let snake_head = snake_body[snake_body.length - 1];
 
-    snake_body.push(add([
-        sprite('snake-skin'),
-        pos(snake_head.pos.x + move_x, snake_head.pos.y + move_y),
-        area(),
-        "snake"
-    ]));
+  snake_body.push(add([
+    rect(block_size - 4, block_size - 4),
+    pos(snake_head.pos.x + move_x, snake_head.pos.y + move_y),
+    color(0, 255, 255),
+    area(),
+    "snake"
+  ]));
 
-    if (snake_body.length > snake_length){
-        let tail = snake_body.shift(); // Remove the last of the tail
-        destroy(tail);
-    }
+  if (snake_body.length > snake_length) {
+    let tail = snake_body.shift();
+    destroy(tail);
+  }
 
+  scoreText.text = score.toString();
 });
