@@ -2350,18 +2350,18 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var kaboom_default = xn();
 
   // code/main.js
-  kaboom_default({ background: [51, 151, 255] });
-  loadSprite("background", "sprites/background.png");
-  loadSprite("fence-top", "sprites/fence-top.png");
-  loadSprite("fence-bottom", "sprites/fence-bottom.png");
-  loadSprite("fence-left", "sprites/fence-left.png");
-  loadSprite("fence-right", "sprites/fence-right.png");
-  loadSprite("post-top-left", "sprites/post-top-left.png");
-  loadSprite("post-top-right", "sprites/post-top-right.png");
-  loadSprite("post-bottom-left", "sprites/post-bottom-left.png");
-  loadSprite("post-bottom-right", "sprites/post-bottom-right.png");
-  loadSprite("snake-skin", "sprites/snake-skin.png");
-  loadSprite("pizza", "sprites/pizza.png");
+  kaboom_default({ background: [0, 0, 30] });
+  loadSprite("background", "sprites/space.png");
+  loadSprite("fence-top", "sprites/laser-h.png");
+  loadSprite("fence-bottom", "sprites/laser-h.png");
+  loadSprite("fence-left", "sprites/laser-v.png");
+  loadSprite("fence-right", "sprites/laser-v.png");
+  loadSprite("post-top-left", "sprites/laser-corner.png");
+  loadSprite("post-top-right", "sprites/laser-corner.png");
+  loadSprite("post-bottom-left", "sprites/laser-corner.png");
+  loadSprite("post-bottom-right", "sprites/laser-corner.png");
+  loadSprite("snake-skin", "sprites/lightsaber.png");
+  loadSprite("pizza", "sprites/rebel.png");
   layers([
     "background",
     "game"
@@ -2459,7 +2459,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }
   __name(respawn_snake, "respawn_snake");
   add([
-    text("\nSimple Snake Game\nYou Finish It!", { size: 20, font: "sinko" }),
+    text("\nStar Wars Snake\nUse The Force!", { size: 20, font: "sinko", color: rgb(255, 232, 31) }),
     pos(24, 270),
     fixed()
   ]);
