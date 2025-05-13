@@ -80,19 +80,19 @@ function spawnFood() {
 }
 
 // Handle key controls
-onKeyPress("up", () => {
+onKeyDown("up", () => {
   if (direction !== "down") direction = "up";
 });
 
-onKeyPress("down", () => {
+onKeyDown("down", () => {
   if (direction !== "up") direction = "down";
 });
 
-onKeyPress("left", () => {
+onKeyDown("left", () => {
   if (direction !== "right") direction = "left";
 });
 
-onKeyPress("right", () => {
+onKeyDown("right", () => {
   if (direction !== "left") direction = "right";
 });
 
