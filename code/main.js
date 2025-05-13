@@ -45,7 +45,7 @@ scene("instructions", () => {
     color(0, 255, 0),
   ]);
 
-  onKeyPress("space", () => {
+  keyPress("space", () => {
     go("game");
   });
 });
@@ -233,11 +233,11 @@ scene("lose", (score) => {
     origin("center"),
   ]);
 
-  onKeyPress("space", () => {
+  keyPress("space", () => {
     go("game");
   });
 
-  onKeyPress("escape", () => {
+  keyPress("escape", () => {
     go("instructions");
   });
 });
