@@ -113,7 +113,7 @@ scene("game", () => {
 
   // Game loop
   let moveTimer = 0;
-  onUpdate(() => {
+  action(() => {
     if (gameOver) return;
 
     moveTimer += dt();
