@@ -2433,19 +2433,19 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       pos(24, 24),
       color(255, 255, 255)
     ]);
-    k.onKeyPress("up", () => {
+    onKeyDown("up", () => {
       if (direction !== "down")
         direction = "up";
     });
-    k.onKeyPress("down", () => {
+    onKeyDown("down", () => {
       if (direction !== "up")
         direction = "down";
     });
-    k.onKeyPress("left", () => {
+    onKeyDown("left", () => {
       if (direction !== "right")
         direction = "left";
     });
-    k.onKeyPress("right", () => {
+    onKeyDown("right", () => {
       if (direction !== "left")
         direction = "right";
     });
