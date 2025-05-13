@@ -2,27 +2,14 @@ import kaboom from "kaboom";
 
 kaboom({background:[0,0,30]});
 
-loadSprite("background", "sprites/space.png");
 loadSprite("fence-top", "sprites/laser-h.png");
 loadSprite("fence-bottom", "sprites/laser-h.png");
 loadSprite("fence-left", "sprites/laser-v.png");
 loadSprite("fence-right", "sprites/laser-v.png");
-loadSprite("post-top-left", "sprites/laser-corner.png");
-loadSprite("post-top-right", "sprites/laser-corner.png");
-loadSprite("post-bottom-left", "sprites/laser-corner.png");
-loadSprite("post-bottom-right", "sprites/laser-corner.png");
-loadSprite("snake-skin", "sprites/lightsaber.png");
-loadSprite("pizza", "sprites/rebel.png");
 
 layers([
-    "background",
     "game"
 ], "game");
-
-add([
-    sprite("background"),
-    layer("background")
-]);
 
 const directions = {
   UP: "up",
