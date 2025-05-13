@@ -2355,9 +2355,6 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   loadSprite("fence-bottom", "sprites/laser-h.png");
   loadSprite("fence-left", "sprites/laser-v.png");
   loadSprite("fence-right", "sprites/laser-v.png");
-  layers([
-    "game"
-  ], "game");
   var directions = {
     UP: "up",
     DOWN: "down",
@@ -2368,6 +2365,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var run_action = false;
   var snake_length = 3;
   var snake_body = [];
+  var score = 0;
   var block_size = 20;
   var map = addLevel([
     "1tttttttttttt2",
@@ -2409,22 +2407,22 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       "wall"
     ],
     "1": () => [
-      sprite("post-top-left"),
+      sprite("fence-left"),
       area(),
       "wall"
     ],
     "2": () => [
-      sprite("post-top-right"),
+      sprite("fence-right"),
       area(),
       "wall"
     ],
     "3": () => [
-      sprite("post-bottom-left"),
+      sprite("fence-left"),
       area(),
       "wall"
     ],
     "4": () => [
-      sprite("post-bottom-right"),
+      sprite("fence-right"),
       area(),
       "wall"
     ]
@@ -2435,10 +2433,12 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     });
     snake_body = [];
     snake_length = 3;
+    score = 0;
     for (let i = 1; i <= snake_length; i++) {
       snake_body.push(add([
-        sprite("snake-skin"),
+        rect(block_size - 4, block_size - 4),
         pos(block_size, block_size * i),
+        color(0, 255, 255),
         area(),
         "snake"
       ]));
@@ -2447,7 +2447,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   }
   __name(respawn_snake, "respawn_snake");
   add([
-    text("\nStar Wars Snake\nUse The Force!", { size: 20, font: "sinko", color: rgb(255, 232, 31) }),
+    text("Star Wars Snake\nUse The Force!", { size: 20, font: "sinko", color: rgb(255, 232, 31) }),
     pos(24, 270),
     fixed()
   ]);
@@ -2461,7 +2461,8 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       destroy(food);
     }
     food = add([
-      sprite("pizza"),
+      circle(8),
+      color(255, 0, 0),
       pos(new_pos),
       area(),
       "food"
@@ -2480,6 +2481,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   respawn_all();
   collides("snake", "food", (s2, f) => {
     snake_length++;
+    score += 10;
     respawn_food();
   });
   collides("snake", "wall", (s2, w) => {
@@ -2512,6 +2514,18 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       current_direction = directions.RIGHT;
     }
   });
+  add([
+    text("Score:", { size: 20, font: "sinko", color: rgb(255, 232, 31) }),
+    pos(24, 24),
+    fixed(),
+    "score"
+  ]);
+  var scoreText = add([
+    text("0", { size: 20, font: "sinko", color: rgb(255, 232, 31) }),
+    pos(100, 24),
+    fixed(),
+    "scoreValue"
+  ]);
   var move_delay = 0.2;
   var timer = 0;
   action(() => {
@@ -2543,8 +2557,9 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
     let snake_head = snake_body[snake_body.length - 1];
     snake_body.push(add([
-      sprite("snake-skin"),
+      rect(block_size - 4, block_size - 4),
       pos(snake_head.pos.x + move_x, snake_head.pos.y + move_y),
+      color(0, 255, 255),
       area(),
       "snake"
     ]));
@@ -2552,6 +2567,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       let tail = snake_body.shift();
       destroy(tail);
     }
+    scoreText.text = score.toString();
   });
 })();
 //# sourceMappingURL=game.js.map
