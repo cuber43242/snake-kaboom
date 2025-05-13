@@ -194,7 +194,7 @@ scene("lose", (score) => {
     origin("center"),
   ]);
 
-  k.onKeyPress("space", () => {
+  onKeyPress("space", () => {
     go("game");
   });
 });
@@ -213,7 +213,7 @@ scene("win", () => {
     origin("center"),
   ]);
 
-  k.onKeyPress("space", () => {
+  onKeyPress("space", () => {
     go("game");
   });
 });
