@@ -2480,7 +2480,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         "snake"
       ]);
       snake.unshift(newHead);
-      if (!isColliding(newHead, food)) {
+      if (!newHead.isColliding(food)) {
         const tail = snake.pop();
         destroy(tail);
       } else {
@@ -2494,7 +2494,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
           go("win");
         }
       }
-      if (isColliding(newHead, get("wall")[0]) || snake.slice(1).some((segment) => isColliding(newHead, segment))) {
+      if (newHead.isColliding("wall") || snake.slice(1).some((segment) => newHead.isColliding(segment))) {
         gameOver = true;
         shake(12);
         wait(1, () => {
