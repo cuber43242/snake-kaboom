@@ -1,8 +1,11 @@
+
 import kaboom from "kaboom";
 
 const k = kaboom({
   background: [0, 0, 30],
   global: true,
+  width: 800,  // Make game bigger
+  height: 600, // Make game bigger
 });
 
 loadSprite("fence-top", "sprites/laser-h.png");
@@ -12,8 +15,43 @@ loadSprite("fence-right", "sprites/laser-v.png");
 
 let highScore = 0;
 
+// Add instructions scene
+scene("instructions", () => {
+  add([
+    text("SNAKE GAME", { size: 48 }),
+    pos(width() / 2, height() / 4),
+    origin("center"),
+    color(255, 255, 0),
+  ]);
+
+  add([
+    text("How to Play:", { size: 32 }),
+    pos(width() / 2, height() / 2 - 50),
+    origin("center"),
+    color(255, 255, 255),
+  ]);
+
+  add([
+    text("- Use arrow keys to control the snake\n- Collect red food to grow\n- Avoid walls and yourself\n- Score increases with each food eaten", 
+      { size: 24 }),
+    pos(width() / 2, height() / 2 + 50),
+    origin("center"),
+  ]);
+
+  add([
+    text("Press SPACE to Start", { size: 32 }),
+    pos(width() / 2, height() - 100),
+    origin("center"),
+    color(0, 255, 0),
+  ]);
+
+  onKeyPress("space", () => {
+    go("game");
+  });
+});
+
 scene("game", () => {
-  const BLOCK_SIZE = 20;
+  const BLOCK_SIZE = 25; // Bigger blocks
   let SNAKE_SPEED = 0.2;
   let score = 0;
   let snake = [];
@@ -21,22 +59,28 @@ scene("game", () => {
   let gameOver = false;
   let food = null;
 
-  // Create game level
   const level = addLevel([
-    "wwwwwwwwwwwwww",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "w            w",
-    "wwwwwwwwwwwwww",
+    "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "w                              w",
+    "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
   ], {
     width: BLOCK_SIZE,
     height: BLOCK_SIZE,
@@ -48,7 +92,6 @@ scene("game", () => {
     ]
   });
 
-  // Initialize snake
   function initSnake() {
     snake = [];
     direction = "right";
@@ -67,13 +110,12 @@ scene("game", () => {
     }
   }
 
-  // Spawn food
   function spawnFood() {
     if (food) {
       destroy(food);
     }
-    const randomX = Math.floor(Math.random() * 12) + 1;
-    const randomY = Math.floor(Math.random() * 12) + 1;
+    const randomX = Math.floor(Math.random() * 28) + 1;
+    const randomY = Math.floor(Math.random() * 18) + 1;
     food = add([
       rect(BLOCK_SIZE - 4, BLOCK_SIZE - 4),
       pos(BLOCK_SIZE * randomX, BLOCK_SIZE * randomY),
@@ -83,21 +125,12 @@ scene("game", () => {
     ]);
   }
 
-  // Add instructions
-  add([
-    text("Use arrow keys to move", { size: 12 }),
-    pos(24, height() - 24),
-    color(255, 255, 255),
-  ]);
-
-  // Add score display
   const scoreLabel = add([
-    text("Score: 0  High Score: 0", { size: 20 }),
+    text("Score: 0  High Score: " + highScore, { size: 24 }),
     pos(24, 24),
     color(255, 255, 255),
   ]);
 
-  // Handle key controls using Kaboom's input handling
   action(() => {
     if (keyIsDown("up") && direction !== "down") {
       direction = "up";
@@ -113,7 +146,6 @@ scene("game", () => {
     }
   });
 
-  // Game loop
   let moveTimer = 0;
   action(() => {
     if (gameOver) return;
@@ -151,14 +183,8 @@ scene("game", () => {
       scoreLabel.text = `Score: ${score}  High Score: ${highScore}`;
       spawnFood();
 
-      // Increase difficulty every 50 points
       if (score % 50 === 0) {
         SNAKE_SPEED = Math.max(0.05, SNAKE_SPEED - 0.02);
-      }
-
-      // Win condition
-      if (score >= 100) {
-        go("win");
       }
     }
 
@@ -183,46 +209,37 @@ scene("lose", (score) => {
   const isNewHighScore = score > highScore;
 
   add([
-    text(isNewHighScore ? "New High Score!" : "Game Over!", { size: 32 }),
-    pos(width() / 2, height() / 2 - 64),
+    text(isNewHighScore ? "New High Score!" : "Game Over!", { size: 48 }),
+    pos(width() / 2, height() / 2 - 100),
     origin("center"),
     color(isNewHighScore ? rgb(255, 215, 0) : rgb(255, 0, 0)),
   ]);
 
   add([
-    text(`Score: ${score}\nHigh Score: ${highScore}`, { size: 24 }),
+    text(`Score: ${score}\nHigh Score: ${highScore}`, { size: 32 }),
     pos(width() / 2, height() / 2),
     origin("center"),
   ]);
 
   add([
-    text("Press SPACE to retry", { size: 16 }),
-    pos(width() / 2, height() / 2 + 64),
+    text("Press SPACE to Play Again", { size: 24 }),
+    pos(width() / 2, height() / 2 + 80),
+    origin("center"),
+  ]);
+
+  add([
+    text("Press ESC for Instructions", { size: 24 }),
+    pos(width() / 2, height() / 2 + 120),
     origin("center"),
   ]);
 
   onKeyPress("space", () => {
     go("game");
   });
-});
 
-scene("win", () => {
-  add([
-    text("You Won!", { size: 32 }),
-    pos(width() / 2, height() / 2 - 64),
-    origin("center"),
-    color(0, 255, 0),
-  ]);
-
-  add([
-    text("Press SPACE to play again", { size: 16 }),
-    pos(width() / 2, height() / 2 + 64),
-    origin("center"),
-  ]);
-
-  onKeyPress("space", () => {
-    go("game");
+  onKeyPress("escape", () => {
+    go("instructions");
   });
 });
 
-go("game");
+go("instructions");
