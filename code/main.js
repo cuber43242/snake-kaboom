@@ -122,7 +122,7 @@ function respawn_food() {
     destroy(food);
   }
   food = add([
-    circle(8),
+    rect(16, 16),
     color(255, 0, 0),
     pos(new_pos),
     area(),
