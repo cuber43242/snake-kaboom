@@ -2433,21 +2433,19 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       pos(24, 24),
       color(255, 255, 255)
     ]);
-    onKeyDown("up", () => {
-      if (direction !== "down")
+    action(() => {
+      if (isKeyDown("up") && direction !== "down") {
         direction = "up";
-    });
-    onKeyDown("down", () => {
-      if (direction !== "up")
+      }
+      if (isKeyDown("down") && direction !== "up") {
         direction = "down";
-    });
-    onKeyDown("left", () => {
-      if (direction !== "right")
+      }
+      if (isKeyDown("left") && direction !== "right") {
         direction = "left";
-    });
-    onKeyDown("right", () => {
-      if (direction !== "left")
+      }
+      if (isKeyDown("right") && direction !== "left") {
         direction = "right";
+      }
     });
     let moveTimer = 0;
     onUpdate(() => {
