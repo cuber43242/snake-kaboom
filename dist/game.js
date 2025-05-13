@@ -2421,19 +2421,19 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     ]);
   }
   __name(spawnFood, "spawnFood");
-  onKeyDown("up", () => {
+  onKeyPress("up", () => {
     if (direction !== "down")
       direction = "up";
   });
-  onKeyDown("down", () => {
+  onKeyPress("down", () => {
     if (direction !== "up")
       direction = "down";
   });
-  onKeyDown("left", () => {
+  onKeyPress("left", () => {
     if (direction !== "right")
       direction = "left";
   });
-  onKeyDown("right", () => {
+  onKeyPress("right", () => {
     if (direction !== "left")
       direction = "right";
   });
