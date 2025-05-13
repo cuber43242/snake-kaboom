@@ -2434,16 +2434,16 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       color(255, 255, 255)
     ]);
     action(() => {
-      if (isKeyDown("up") && direction !== "down") {
+      if (keyIsDown("up") && direction !== "down") {
         direction = "up";
       }
-      if (isKeyDown("down") && direction !== "up") {
+      if (keyIsDown("down") && direction !== "up") {
         direction = "down";
       }
-      if (isKeyDown("left") && direction !== "right") {
+      if (keyIsDown("left") && direction !== "right") {
         direction = "left";
       }
-      if (isKeyDown("right") && direction !== "left") {
+      if (keyIsDown("right") && direction !== "left") {
         direction = "right";
       }
     });
