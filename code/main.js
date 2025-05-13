@@ -95,21 +95,20 @@ scene("game", () => {
     color(255, 255, 255),
   ]);
 
-  // Handle key controls
-  onKeyDown("up", () => {
-    if (direction !== "down") direction = "up";
-  });
-
-  onKeyDown("down", () => {
-    if (direction !== "up") direction = "down";
-  });
-
-  onKeyDown("left", () => {
-    if (direction !== "right") direction = "left";
-  });
-
-  onKeyDown("right", () => {
-    if (direction !== "left") direction = "right";
+  // Handle key controls using Kaboom's input handling
+  action(() => {
+    if (isKeyDown("up") && direction !== "down") {
+      direction = "up";
+    }
+    if (isKeyDown("down") && direction !== "up") {
+      direction = "down";
+    }
+    if (isKeyDown("left") && direction !== "right") {
+      direction = "left";
+    }
+    if (isKeyDown("right") && direction !== "left") {
+      direction = "right";
+    }
   });
 
   // Game loop
