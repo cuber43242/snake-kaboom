@@ -2448,7 +2448,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       }
     });
     let moveTimer = 0;
-    onUpdate(() => {
+    action(() => {
       if (gameOver)
         return;
       moveTimer += dt();
