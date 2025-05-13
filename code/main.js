@@ -97,16 +97,16 @@ scene("game", () => {
 
   // Handle key controls using Kaboom's input handling
   action(() => {
-    if (isKeyDown("up") && direction !== "down") {
+    if (keyIsDown("up") && direction !== "down") {
       direction = "up";
     }
-    if (isKeyDown("down") && direction !== "up") {
+    if (keyIsDown("down") && direction !== "up") {
       direction = "down";
     }
-    if (isKeyDown("left") && direction !== "right") {
+    if (keyIsDown("left") && direction !== "right") {
       direction = "left";
     }
-    if (isKeyDown("right") && direction !== "left") {
+    if (keyIsDown("right") && direction !== "left") {
       direction = "right";
     }
   });
