@@ -2358,6 +2358,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   loadSprite("fence-bottom", "sprites/laser-h.png");
   loadSprite("fence-left", "sprites/laser-v.png");
   loadSprite("fence-right", "sprites/laser-v.png");
+  var highScore = 0;
   scene("game", () => {
     const BLOCK_SIZE = 20;
     let SNAKE_SPEED = 0.2;
@@ -2429,7 +2430,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
       color(255, 255, 255)
     ]);
     const scoreLabel = add([
-      text("Score: 0", { size: 20 }),
+      text("Score: 0  High Score: 0", { size: 20 }),
       pos(24, 24),
       color(255, 255, 255)
     ]);
@@ -2485,7 +2486,7 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         destroy(tail);
       } else {
         score += 10;
-        scoreLabel.text = `Score: ${score}`;
+        scoreLabel.text = `Score: ${score}  High Score: ${highScore}`;
         spawnFood();
         if (score % 50 === 0) {
           SNAKE_SPEED = Math.max(0.05, SNAKE_SPEED - 0.02);
@@ -2498,6 +2499,9 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
         gameOver = true;
         shake(12);
         wait(1, () => {
+          if (score > highScore) {
+            highScore = score;
+          }
           go("lose", score);
         });
       }
@@ -2506,14 +2510,16 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
     spawnFood();
   });
   scene("lose", (score) => {
+    const isNewHighScore = score > highScore;
     add([
-      text("Game Over!", { size: 32 }),
+      text(isNewHighScore ? "New High Score!" : "Game Over!", { size: 32 }),
       pos(width() / 2, height() / 2 - 64),
       origin("center"),
-      color(255, 0, 0)
+      color(isNewHighScore ? rgb(255, 215, 0) : rgb(255, 0, 0))
     ]);
     add([
-      text(`Score: ${score}`, { size: 24 }),
+      text(`Score: ${score}
+High Score: ${highScore}`, { size: 24 }),
       pos(width() / 2, height() / 2),
       origin("center")
     ]);
